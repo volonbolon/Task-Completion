@@ -24,7 +24,7 @@
 
 - (void)updateLabels:(NSDictionary *)payload; 
 
-- (IBAction)startButtonTapped; 
+- (IBAction)toggleRun; 
 
 @end
 

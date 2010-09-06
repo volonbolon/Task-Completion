@@ -14,7 +14,9 @@
 
 - (void)main {
 	double s = 0.0; 
-	for (int k = 0; k < 10000; k++) {
+	
+	double k = 0; 
+	while ( ![self isCancelled] ) {
 		[NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:.5]];
 		double m = pow(16.0,-k)*(4.0/(8.0*k+1.0)-2.0/(8.0*k+4.0)-1.0/(8.0*k+5.0)-1.0/(8.0*k+6.0)); 
 		s += m; 
@@ -28,7 +30,8 @@
 												withObject:payload 
 											 waitUntilDone:YES]; 
 		[payload release];
-	} 
+		k = k + 1.0; 
+	}
 }
 
 - (void)dealloc {

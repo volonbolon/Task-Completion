@@ -9,6 +9,9 @@
 #import "PiViewController.h"
 #import "CrunchPiOperation.h"
 
+#define START_TITLE @"start"
+#define STOP_TITLE  @"stop"
+
 @interface PiViewController ()
 - (void)stopCrunching; 
 - (void)startCrunching; 
@@ -21,6 +24,22 @@
 @synthesize intermimLabel;
 @synthesize startButton;
 
+- (id)initWithCoder:(NSCoder *)aDecoder {
+	if ( self = [super initWithCoder:aDecoder] ) {
+		NSOperationQueue *q = [[NSOperationQueue alloc] init]; 
+		self.queue = q; 
+		[q release]; 
+		
+		CrunchPiOperation *cpo = [[CrunchPiOperation alloc] init]; 
+		cpo.piViewController = self; 
+		[self.queue addOperation:cpo]; 
+		[cpo release]; 
+		
+		[self.queue setSuspended:YES]; 
+	}
+	return self; 
+}
+
 - (void)updateLabels:(NSDictionary *)payload {	
 	NSString *member = [[NSString alloc] initWithFormat:@"%e", [[payload objectForKey:@"member"] doubleValue]]; 
 	self.memberLabel.text = member; 
@@ -32,6 +51,9 @@
 }
 
 - (void)viewDidUnload {
+	[self.startButton setTitle:START_TITLE
+					  forState:UIControlStateNormal]; 
+	
 	self.memberLabel = nil;
     self.intermimLabel = nil;
     self.startButton = nil;
@@ -47,23 +69,27 @@
     [super dealloc];
 }
 
-- (IBAction)startButtonTapped {
-	UIBackgroundTaskIdentifier bti = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+- (IBAction)toggleRun {
+	if ( [[self.startButton titleForState:UIControlStateNormal] isEqualToString:@"Start"] ) {
+		[self.startButton setTitle:STOP_TITLE
+						  forState:UIControlStateNormal]; 
+		UIBackgroundTaskIdentifier bti = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+			[self stopCrunching]; 
+		}];
+		[self startCrunching]; 
+		[[UIApplication sharedApplication] endBackgroundTask:bti]; 
+	} else {
 		[self stopCrunching]; 
-	}];
-	[self startCrunching]; 
-	[[UIApplication sharedApplication] endBackgroundTask:bti]; 
+	}	
 }
 
 - (void)stopCrunching {
+	NSLog(@"stopCrunching %@", self.queue);
+	
 	[self.queue cancelAllOperations]; 
 }
 
-- (void)startCrunching {
-	NSOperationQueue *q = [[NSOperationQueue alloc] init]; 
-	self.queue = q; 
-	[q release]; 
-	
+- (void)startCrunching { 	
 	CrunchPiOperation *cpo = [[CrunchPiOperation alloc] init]; 
 	cpo.piViewController = self; 
 	[self.queue addOperation:cpo]; 
