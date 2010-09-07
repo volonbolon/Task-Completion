@@ -1,1 +1,1 @@
-Please, refer to (my blog)[http://volonbolon.tumblr.com/post/1080236607/more-multitasking-in-ios-task-completion] for more information. 
+Please, refer to [my blog](http://volonbolon.tumblr.com/post/1080236607/more-multitasking-in-ios-task-completion) for more information. 
