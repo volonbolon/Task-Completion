@@ -9,8 +9,8 @@
 #import "PiViewController.h"
 #import "CrunchPiOperation.h"
 
-#define START_TITLE @"start"
-#define STOP_TITLE  @"stop"
+#define START_TITLE @"Start"
+#define STOP_TITLE  @"Stop"
 
 @interface PiViewController ()
 - (void)stopCrunching; 
@@ -25,7 +25,7 @@
 @synthesize startButton;
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
-	if ( self = [super initWithCoder:aDecoder] ) {
+	if ( (self = [super initWithCoder:aDecoder]) ) {
 		NSOperationQueue *q = [[NSOperationQueue alloc] init]; 
 		self.queue = q; 
 		[q release]; 
@@ -85,7 +85,10 @@
 
 - (void)stopCrunching {
 	NSLog(@"stopCrunching %@", self.queue);
-	
+	if ( [[self.startButton titleForState:UIControlStateNormal] isEqualToString:@"Stop"] ) {
+		[self.startButton setTitle:START_TITLE
+						  forState:UIControlStateNormal]; 
+    }
 	[self.queue cancelAllOperations]; 
 }
 
@@ -93,6 +96,7 @@
 	CrunchPiOperation *cpo = [[CrunchPiOperation alloc] init]; 
 	cpo.piViewController = self; 
 	[self.queue addOperation:cpo]; 
+    [self.queue setSuspended:NO];
 	[cpo release]; 
 }
 
